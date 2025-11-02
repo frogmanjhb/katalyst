@@ -66,12 +66,51 @@ The website is fully responsive with breakpoints at:
 
 ## 🌐 Deployment
 
-This website can be deployed to any static hosting service:
+This website is configured for automated deployment to Absolute Hosting via GitHub Actions.
+
+### Automated Deployment Setup
+
+The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically deploys your website to Absolute Hosting whenever you push changes to the `main` branch.
+
+#### Initial Setup Steps:
+
+1. **Get FTP Credentials from Absolute Hosting:**
+   - Log in to your Solid Control Panel at Absolute Hosting
+   - Navigate to "Hosting Space Menu" → "FTP Accounts"
+   - Create or note your FTP account username and password
+   - Find your FTP server address (usually `ftp.yourdomain.co.za` or similar)
+
+2. **Configure GitHub Secrets:**
+   - Go to your GitHub repository
+   - Navigate to **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret** and add:
+     - `FTP_SERVER`: Your FTP server address (e.g., `ftp.yourdomain.co.za`)
+     - `FTP_USERNAME`: Your FTP account username
+     - `FTP_PASSWORD`: Your FTP account password
+
+3. **Adjust Server Directory (if needed):**
+   - Open `.github/workflows/deploy.yml`
+   - The default `server-dir` is set to `/public_html/`
+   - If your hosting uses a different directory (like `/www/`, `/htdocs/`, etc.), update line 17
+
+4. **Deploy:**
+   - Push any change to the `main` branch, or
+   - Go to **Actions** tab in GitHub and manually trigger the workflow
+
+#### Manual Deployment
+
+If you prefer to deploy manually via FTP:
+- Use an FTP client (FileZilla, WinSCP, etc.)
+- Upload all files: `index.html`, `styles.css`, `script.js`
+- Upload to your web root directory (usually `/public_html/` or `/www/`)
+
+### Other Hosting Options
+
+This website can also be deployed to:
 - **Netlify**: Drag and drop deployment
 - **Vercel**: Git-based deployment
 - **GitHub Pages**: Free hosting for public repos
 - **AWS S3**: Static website hosting
-- **Traditional web hosting**: Upload via FTP
 
 ## 📧 Contact Form
 
