@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./
-          server-dir: ./  # Starting with root - update to /public_html/ or /www/ if needed
+          server-dir: ./public_html/  # Common web root - try ./www/ or ./htdocs/ if this doesn't work
           dangerous-clean-slate: false
           log-level: verbose
           exclude: |
@@ -94,9 +94,12 @@ jobs:
           echo "Files should now be available on your website."
           echo ""
           echo "If your website isn't loading, check:"
-          echo "1. Server directory path in workflow (update server-dir if needed)"
-          echo "2. DNS settings point to correct server"
-          echo "3. File permissions on hosting server"
+          echo "1. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
+          echo "2. Try accessing in Incognito/Private mode"
+          echo "3. Check file timestamps in hosting control panel to verify files updated"
+          echo "4. Wait 1-2 minutes for DNS/caching to update"
+          echo ""
+          echo "Files deployed to: ./public_html/ directory"
 
       - name: Deployment Failed - Troubleshooting
         if: failure()
