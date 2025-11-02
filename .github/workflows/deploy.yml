@@ -40,18 +40,16 @@ jobs:
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
 
-      - name: FTP Deploy (try FTP first)
-        id: ftp-deploy
-        continue-on-error: true
+      - name: FTPS Deploy (FTPS works with your server)
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
           local-dir: ./
-          server-dir: ./public_html/  # Web root directory - adjust if needed: /public_html/ or /www/
+          server-dir: ./  # Starting with root - update to /public_html/ or /www/ if needed
           dangerous-clean-slate: false
-          dry-run: false
           log-level: verbose
           exclude: |
             **/.git*
@@ -62,27 +60,6 @@ jobs:
             .gitignore
             DEPLOYMENT_TROUBLESHOOTING.md
 
-      - name: SFTP Deploy (fallback if FTP fails)
-        if: steps.ftp-deploy.outcome == 'failure'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          port: 22
-          local-dir: ./
-          server-dir: ./public_html/
-          dangerous-clean-slate: false
-          log-level: verbose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            README.md
-            .gitignore
-            DEPLOYMENT_TROUBLESHOOTING.md
 
       - name: Deployment Summary
         if: success()
@@ -91,7 +68,9 @@ jobs:
           echo "Files should now be available on your website."
           echo ""
           echo "If your website isn't loading, check:"
-          echo "1. Server directory path in workflow (currently: ./public_html/)"
+          echo "1. Server directory path in workflow (update server-dir if needed)"
           echo "2. DNS settings point to correct server"
           echo "3. File permissions on hosting server"
+          echo ""
+          echo "Note: Using FTPS (TLS) which works with your server"
 

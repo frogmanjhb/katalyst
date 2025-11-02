@@ -23,9 +23,10 @@
    - Wait 30-60 minutes before trying again
    - Or contact Absolute Hosting support to unblock
 
-4. **Server requires SFTP instead of FTP**
-   - The error message mentions "Users sometimes get this error when the server only supports SFTP"
-   - Try the SFTP workflow option (see below)
+4. **Server requires FTPS or SFTP instead of plain FTP**
+   - Some servers require encrypted connections
+   - The workflow will automatically try FTPS as fallback
+   - For SFTP, you may need to contact Absolute Hosting to enable it
 
 **Solution Steps:**
 1. **Test credentials manually first:**
@@ -37,17 +38,18 @@
      - Password: Your password
      - Port: 21 (for FTP) or 22 (for SFTP)
 
-2. **If FTP fails, try SFTP:**
+2. **If FTP fails, try FTPS:**
    - In FileZilla: File → Site Manager → New Site
-   - Protocol: SFTP - SSH File Transfer Protocol
-   - Port: 22
+   - Protocol: FTP - File Transfer Protocol → Encryption: "Require explicit FTP over TLS"
+   - Port: 21
    - Test connection
+   - The workflow will automatically try FTPS if FTP fails
 
 3. **Once you get a successful manual connection:**
    - Note the exact username format that worked
-   - Note the protocol (FTP or SFTP) and port
+   - Note the protocol (FTP, FTPS, or SFTP) and port
    - Update your GitHub Secrets with the correct format
-   - If SFTP worked, the workflow will automatically try SFTP as fallback
+   - The workflow will automatically try FTPS if FTP fails
 
 4. **Reset FTP password if unsure:**
    - Log into Absolute Hosting control panel
