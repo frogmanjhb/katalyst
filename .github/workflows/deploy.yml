@@ -69,54 +69,40 @@ jobs:
           echo "SFTP Server: $SFTP_SERVER"
           echo "SFTP Username: $SFTP_USERNAME"
           echo ""
-          echo "ℹ️  Using SFTP (SSH File Transfer Protocol) - secure, uses port 22"
-          echo "💡 Using existing FTP_* secrets (or create SFTP_* secrets if preferred)"
+          echo "ℹ️  Using plain FTP (port 21) - SFTP port 22 not accessible, FTPS not working"
+          echo "💡 Using existing FTP_* secrets"
           
           # Export for next step
           echo "SFTP_SERVER=$SFTP_SERVER" >> $GITHUB_ENV
           echo "SFTP_USERNAME=$SFTP_USERNAME" >> $GITHUB_ENV
           echo "SFTP_PASSWORD=$SFTP_PASSWORD" >> $GITHUB_ENV
 
-      - name: SFTP Deploy using sshpass and sftp
-        timeout-minutes: 5
-        run: |
-          # Install sshpass for password authentication
-          sudo apt-get update -qq
-          sudo apt-get install -y sshpass openssh-client
-          
-          # Create SFTP batch script
-          cat > /tmp/sftp_batch.txt << 'SFTPBATCH'
-          cd /home/katalyst/public_html
-          -mkdir public_html
-          put index.html
-          put styles.css
-          put script.js
-          quit
-          SFTPBATCH
-          
-          # Use sshpass to provide password to sftp
-          # Note: Remove port :22 if default SSH port works
-          sshpass -p "${{ env.SFTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -b /tmp/sftp_batch.txt -P 22 "${{ env.SFTP_USERNAME }}@${{ env.SFTP_SERVER }}" || {
-            echo "❌ SFTP upload failed!"
-            echo "Trying alternative: using server IP address instead of domain..."
-            sshpass -p "${{ env.SFTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -b /tmp/sftp_batch.txt -P 22 "${{ env.SFTP_USERNAME }}@102.214.8.67" || {
-              echo "❌ SFTP failed with both domain and IP address"
-              echo "Possible issues:"
-              echo "  1. SFTP/SSH not enabled on server"
-              echo "  2. Server requires SSH key instead of password"
-              echo "  3. Port 22 is blocked or different port needed"
-              echo "  4. Credentials incorrect"
-              exit 1
-            }
-          }
-          
-          echo "✅ Files uploaded via SFTP successfully!"
+      - name: FTP Deploy (plain FTP - port 21)
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ env.SFTP_SERVER }}
+          username: ${{ env.SFTP_USERNAME }}
+          password: ${{ env.SFTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ./
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
+          log-level: verbose
+          state-name: github-actions-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            README.md
+            .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
 
 
       - name: Verify Deployment
         if: success()
         run: |
-          echo "✅ SFTP Deployment completed successfully!"
+          echo "✅ FTP Deployment completed successfully!"
           echo ""
           echo "📋 Files deployed to /home/katalyst/public_html/:"
           echo "  - index.html"
@@ -145,15 +131,14 @@ jobs:
           echo "- Created public_html directory"
           echo ""
           echo "⚠️  What failed:"
-          echo "- SFTP connection or authentication issue"
+          echo "- FTP connection or upload issue"
           echo ""
           echo "🔄 Solution:"
-          echo "1. Verify SFTP credentials in GitHub Secrets:"
-          echo "   - FTP_SERVER: ftp.katalystlabs.co.za (or try IP: 102.214.8.67)"
-          echo "   - FTP_USERNAME: katalyst"
-          echo "   - FTP_PASSWORD: (your main hosting account password)"
-          echo "2. SFTP uses port 22 (SSH) - ensure your hosting allows SSH/SFTP access"
-          echo "3. Some hosts require SSH key instead of password - contact Absolute Hosting"
-          echo "4. Verify SFTP is enabled in your hosting account"
-          echo "5. Try testing SFTP manually: sftp katalyst@ftp.katalystlabs.co.za"
+          echo "1. Verify credentials in GitHub Secrets:"
+          echo "   - FTP_SERVER: ftp.katalystlabs.co.za"
+          echo "   - FTP_USERNAME: katalyst (or sean@katalystlabs.co.za if that works)"
+          echo "   - FTP_PASSWORD: (your hosting account password)"
+          echo "2. Plain FTP uses port 21 - should be accessible"
+          echo "3. Check if credentials are correct - test manually in FileZilla"
+          echo "4. Contact Absolute Hosting support if connection issues persist"
 
