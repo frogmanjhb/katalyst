@@ -39,6 +39,13 @@ jobs:
           echo "✅ All FTP secrets are configured"
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
+          echo "FTP Username length: ${#FTP_USERNAME}"
+          echo "FTP Password length: ${#FTP_PASSWORD}"
+          echo ""
+          echo "⚠️  Debugging: Checking for hidden characters..."
+          echo "Username (hex): $(echo -n '${{ secrets.FTP_USERNAME }}' | xxd -p)"
+          echo "Password starts with character code: $(echo -n '${{ secrets.FTP_PASSWORD }}' | head -c1 | od -An -tu1)"
+          echo "Password ends with character code: $(echo -n '${{ secrets.FTP_PASSWORD }}' | tail -c1 | od -An -tu1)"
 
       - name: FTPS Deploy (FTPS works with your server)
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
