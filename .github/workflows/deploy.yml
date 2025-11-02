@@ -39,15 +39,12 @@ jobs:
           echo "✅ All FTP secrets are configured"
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
-          echo "FTP Username length: ${#FTP_USERNAME}"
-          echo "FTP Password length: ${#FTP_PASSWORD}"
           echo ""
-          echo "⚠️  Debugging: Checking for hidden characters..."
-          echo "Username (hex): $(echo -n '${{ secrets.FTP_USERNAME }}' | xxd -p)"
-          echo "Password starts with character code: $(echo -n '${{ secrets.FTP_PASSWORD }}' | head -c1 | od -An -tu1)"
-          echo "Password ends with character code: $(echo -n '${{ secrets.FTP_PASSWORD }}' | tail -c1 | od -An -tu1)"
+          echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
 
-      - name: FTPS Deploy (FTPS works with your server)
+      - name: FTPS Deploy (with explicit TLS)
+        id: ftps-deploy
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -56,6 +53,28 @@ jobs:
           protocol: ftps
           local-dir: ./
           server-dir: ./  # Starting with root - update to /public_html/ or /www/ if needed
+          dangerous-clean-slate: false
+          log-level: verbose
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            README.md
+            .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
+
+      - name: FTPS Legacy Deploy (fallback)
+        if: steps.ftps-deploy.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps-legacy
+          local-dir: ./
+          server-dir: ./
           dangerous-clean-slate: false
           log-level: verbose
           exclude: |
@@ -78,6 +97,16 @@ jobs:
           echo "1. Server directory path in workflow (update server-dir if needed)"
           echo "2. DNS settings point to correct server"
           echo "3. File permissions on hosting server"
+
+      - name: Deployment Failed - Troubleshooting
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
           echo ""
-          echo "Note: Using FTPS (TLS) which works with your server"
+          echo "Common fixes:"
+          echo "1. Double-check FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
+          echo "2. Make sure there are NO extra spaces before/after the password in GitHub Secrets"
+          echo "3. Try deleting and re-adding the FTP_PASSWORD secret"
+          echo "4. Verify FTP_USERNAME is exactly: sean@katalystlabs.co.za (or whatever format worked in FileZilla)"
+          echo "5. Wait a few minutes and try again (sometimes servers block after multiple failed attempts)"
 
