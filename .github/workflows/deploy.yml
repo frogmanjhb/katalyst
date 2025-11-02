@@ -14,6 +14,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: List files to deploy
+        run: |
+          echo "Files to be deployed:"
+          ls -la
+          echo ""
+          echo "HTML, CSS, JS files:"
+          find . -maxdepth 1 -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | head -10
+
+      - name: Verify FTP Secrets
+        run: |
+          if [ -z "${{ secrets.FTP_SERVER }}" ]; then
+            echo "❌ FTP_SERVER secret is missing!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+            echo "❌ FTP_USERNAME secret is missing!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+            echo "❌ FTP_PASSWORD secret is missing!"
+            exit 1
+          fi
+          echo "✅ All FTP secrets are configured"
+          echo "FTP Server: ${{ secrets.FTP_SERVER }}"
+          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
+
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
@@ -21,8 +47,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: /public_html/  # Common web root directory, adjust if different
-          dangerous-clean-slate: false  # Set to true to delete files not in repo
+          server-dir: ./public_html/  # Try relative path first, or use: /public_html/ or /www/
+          dangerous-clean-slate: false
+          dry-run: false  # Set to true to test without actually uploading
+          log-level: verbose  # Enable detailed logging
           exclude: |
             **/.git*
             **/.git*/**
@@ -30,4 +58,15 @@ jobs:
             **/.github/**
             README.md
             .gitignore
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Files should now be available on your website."
+          echo ""
+          echo "If your website isn't loading, check:"
+          echo "1. Server directory path in workflow (currently: ./public_html/)"
+          echo "2. DNS settings point to correct server"
+          echo "3. File permissions on hosting server"
 
