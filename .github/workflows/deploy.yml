@@ -43,8 +43,6 @@ jobs:
           echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
 
       - name: FTPS Deploy (with explicit TLS)
-        id: ftps-deploy
-        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -66,33 +64,11 @@ jobs:
             .gitignore
             DEPLOYMENT_TROUBLESHOOTING.md
 
-      - name: FTPS Legacy Deploy (fallback)
-        if: steps.ftps-deploy.outcome == 'failure'
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps-legacy
-          local-dir: ./
-          server-dir: ./
-          dangerous-clean-slate: false
-          log-level: verbose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            README.md
-            .gitignore
-            DEPLOYMENT_TROUBLESHOOTING.md
-
 
       - name: Verify Deployment
         if: success()
         run: |
-          echo "✅ Deployment completed!"
+          echo "✅ Deployment completed successfully!"
           echo ""
           echo "📋 Files that should be on server:"
           echo "  - index.html"
@@ -102,22 +78,26 @@ jobs:
           echo "🔍 Next steps to verify:"
           echo "1. Check your hosting File Manager (public_html folder)"
           echo "2. Look at file 'Last Modified' timestamps - they should be recent"
-          echo "3. If timestamps didn't change, files might not be uploading"
-          echo "4. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
-          echo "5. Try accessing in Incognito/Private mode"
-          echo ""
-          echo "⚠️  If files still aren't updating, the sync might be skipping unchanged files."
-          echo "   Try making a small change to force an update (add a space/comment in index.html)"
+          echo "3. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
+          echo "4. Try accessing in Incognito/Private mode"
 
       - name: Deployment Failed - Troubleshooting
         if: failure()
         run: |
-          echo "❌ Deployment failed!"
+          echo "❌ Deployment failed with '530 Login incorrect' error!"
           echo ""
-          echo "Common fixes:"
-          echo "1. Double-check FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
-          echo "2. Make sure there are NO extra spaces before/after the password in GitHub Secrets"
-          echo "3. Try deleting and re-adding the FTP_PASSWORD secret"
-          echo "4. Verify FTP_USERNAME is exactly: sean@katalystlabs.co.za (or whatever format worked in FileZilla)"
-          echo "5. Wait a few minutes and try again (sometimes servers block after multiple failed attempts)"
+          echo "🔧 CRITICAL FIX NEEDED:"
+          echo "The password in GitHub Secrets doesn't match what works in FileZilla."
+          echo ""
+          echo "📝 Steps to fix:"
+          echo "1. Go to GitHub → Your Repo → Settings → Secrets and variables → Actions"
+          echo "2. Click on FTP_PASSWORD → Delete it completely"
+          echo "3. Click 'New repository secret' → Name: FTP_PASSWORD"
+          echo "4. In the Value field, TYPE the password manually (don't copy/paste - type it character by character)"
+          echo "5. Make sure there are NO extra spaces at the beginning or end"
+          echo "6. Click 'Add secret'"
+          echo ""
+          echo "⚠️  IMPORTANT: The password MUST be typed manually to avoid hidden characters"
+          echo ""
+          echo "After updating, wait 1-2 minutes, then push a change to trigger deployment again."
 
