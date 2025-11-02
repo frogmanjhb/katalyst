@@ -22,71 +22,62 @@ jobs:
           echo "HTML, CSS, JS files:"
           find . -maxdepth 1 -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | head -10
 
-      - name: Verify SFTP Secrets
-        env:
-          SFTP_SERVER_VAR: ${{ secrets.SFTP_SERVER }}
-          SFTP_USERNAME_VAR: ${{ secrets.SFTP_USERNAME }}
-          SFTP_PASSWORD_VAR: ${{ secrets.SFTP_PASSWORD }}
-          FTP_SERVER_VAR: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME_VAR: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD_VAR: ${{ secrets.FTP_PASSWORD }}
+      - name: Verify FTP Secrets
         run: |
-          # Use existing FTP secrets or SFTP-specific ones
-          if [ -n "$SFTP_SERVER_VAR" ]; then
-            SFTP_SERVER="$SFTP_SERVER_VAR"
-          else
-            SFTP_SERVER="$FTP_SERVER_VAR"
-          fi
-          
-          if [ -n "$SFTP_USERNAME_VAR" ]; then
-            SFTP_USERNAME="$SFTP_USERNAME_VAR"
-          else
-            SFTP_USERNAME="$FTP_USERNAME_VAR"
-          fi
-          
-          if [ -n "$SFTP_PASSWORD_VAR" ]; then
-            SFTP_PASSWORD="$SFTP_PASSWORD_VAR"
-          else
-            SFTP_PASSWORD="$FTP_PASSWORD_VAR"
-          fi
-          
-          if [ -z "$SFTP_SERVER" ]; then
-            echo "❌ SFTP/FTP_SERVER secret is missing!"
-            echo "💡 Add GitHub Secret: FTP_SERVER = ftp.katalystlabs.co.za"
+          if [ -z "${{ secrets.FTP_SERVER }}" ]; then
+            echo "❌ FTP_SERVER secret is missing!"
             exit 1
           fi
-          if [ -z "$SFTP_USERNAME" ]; then
-            echo "❌ SFTP/FTP_USERNAME secret is missing!"
-            echo "💡 Add GitHub Secret: FTP_USERNAME = katalyst"
+          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+            echo "❌ FTP_USERNAME secret is missing!"
             exit 1
           fi
-          if [ -z "$SFTP_PASSWORD" ]; then
-            echo "❌ SFTP/FTP_PASSWORD secret is missing!"
-            echo "💡 Add GitHub Secret: FTP_PASSWORD = (your main hosting account password)"
+          if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+            echo "❌ FTP_PASSWORD secret is missing!"
             exit 1
           fi
-          echo "✅ All SFTP secrets are configured"
-          echo "SFTP Server: $SFTP_SERVER"
-          echo "SFTP Username: $SFTP_USERNAME"
+          echo "✅ All FTP secrets are configured"
+          echo "FTP Server: ${{ secrets.FTP_SERVER }}"
+          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
           echo ""
-          echo "ℹ️  Using plain FTP (port 21) - SFTP port 22 not accessible, FTPS not working"
-          echo "💡 Using existing FTP_* secrets"
-          
-          # Export for next step
-          echo "SFTP_SERVER=$SFTP_SERVER" >> $GITHUB_ENV
-          echo "SFTP_USERNAME=$SFTP_USERNAME" >> $GITHUB_ENV
-          echo "SFTP_PASSWORD=$SFTP_PASSWORD" >> $GITHUB_ENV
+          echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
 
-      - name: FTP Deploy (plain FTP - port 21)
+      - name: FTP Deploy (try plain FTP first - faster, no encryption)
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          server: ${{ env.SFTP_SERVER }}
-          username: ${{ env.SFTP_USERNAME }}
-          password: ${{ env.SFTP_PASSWORD }}
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./
           server-dir: ./public_html/
           dangerous-clean-slate: false
+          dry-run: false
+          log-level: verbose
+          state-name: github-actions-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            README.md
+            .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
+        continue-on-error: true
+        id: ftp-deploy
+
+      - name: FTPS Deploy (fallback if plain FTP fails)
+        if: steps.ftp-deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
+          dry-run: false
           log-level: verbose
           state-name: github-actions-state.json
           exclude: |
@@ -102,17 +93,17 @@ jobs:
       - name: Verify Deployment
         if: success()
         run: |
-          echo "✅ FTP Deployment completed successfully!"
+          echo "✅ Deployment completed successfully!"
           echo ""
-          echo "📋 Files deployed to /home/katalyst/public_html/:"
+          echo "📋 Files that should be on server:"
           echo "  - index.html"
           echo "  - styles.css"
           echo "  - script.js"
           echo ""
           echo "🔍 Next steps to verify:"
-          echo "1. Check your hosting File Manager (/home/katalyst/public_html/ folder)"
+          echo "1. Check your hosting File Manager (public_html folder)"
           echo "2. Look at file 'Last Modified' timestamps - they should be recent"
-          echo "3. Visit your website and clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
+          echo "3. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
           echo "4. Try accessing in Incognito/Private mode"
 
       - name: Deployment Failed - Troubleshooting
@@ -131,14 +122,13 @@ jobs:
           echo "- Created public_html directory"
           echo ""
           echo "⚠️  What failed:"
-          echo "- FTP connection or upload issue"
+          echo "- Connection dropped during file upload"
+          echo ""
+          echo "ℹ️  Note: Tried plain FTP first, then FTPS if needed"
           echo ""
           echo "🔄 Solution:"
-          echo "1. Verify credentials in GitHub Secrets:"
-          echo "   - FTP_SERVER: ftp.katalystlabs.co.za"
-          echo "   - FTP_USERNAME: katalyst (or sean@katalystlabs.co.za if that works)"
-          echo "   - FTP_PASSWORD: (your hosting account password)"
-          echo "2. Plain FTP uses port 21 - should be accessible"
-          echo "3. Check if credentials are correct - test manually in FileZilla"
-          echo "4. Contact Absolute Hosting support if connection issues persist"
+          echo "The workflow will automatically retry. If it fails again:"
+          echo "1. Wait a few minutes and try deploying again"
+          echo "2. Check if your hosting has FTP connection limits"
+          echo "3. Contact Absolute Hosting if connection issues persist"
 
