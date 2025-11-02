@@ -1,6 +1,18 @@
+import { useEffect, useState } from 'react'
 import BounceCards from './BounceCards'
 
 function Projects() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const projects = [
     {
       icon: 'fa-chess',
@@ -45,24 +57,28 @@ function Projects() {
         </div>
         
         {/* BounceCards - Main project display */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          marginTop: '3rem',
-          padding: '0 1rem'
-        }}>
+        <div className="bounce-cards-wrapper">
           <BounceCards
             projects={projects}
-            containerWidth={800}
-            containerHeight={450}
+            containerWidth={isMobile ? 600 : 800}
+            containerHeight={isMobile ? 350 : 450}
             animationDelay={0.3}
             animationStagger={0.08}
-            transformStyles={[
-              'rotate(12deg) translate(-240px)',
-              'rotate(6deg) translate(-120px)',
-              'rotate(-4deg) translate(120px)',
-              'rotate(-10deg) translate(240px)'
-            ]}
+            transformStyles={
+              isMobile 
+                ? [
+                    'rotate(8deg) translate(-150px)',
+                    'rotate(4deg) translate(-75px)',
+                    'rotate(-4deg) translate(75px)',
+                    'rotate(-8deg) translate(150px)'
+                  ]
+                : [
+                    'rotate(12deg) translate(-240px)',
+                    'rotate(6deg) translate(-120px)',
+                    'rotate(-4deg) translate(120px)',
+                    'rotate(-10deg) translate(240px)'
+                  ]
+            }
             enableHover={true}
           />
         </div>

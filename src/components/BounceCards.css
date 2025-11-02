@@ -156,51 +156,81 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .bounceCardsContainer {
-    height: 350px;
+    height: 320px;
     max-width: 100%;
+    margin: 0 auto;
   }
 
   .bounce-card {
-    width: 200px;
+    width: 180px;
+    border-width: 4px;
+  }
+
+  .bounce-card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
 
   .bounce-card-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
   }
 
   .bounce-card-description {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    margin-bottom: 0.65rem;
   }
 
   .bounce-card-overlay {
     padding: 1rem;
   }
+
+  .bounce-card-tags {
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .bounce-card-tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+  }
+
+  .bounce-card-link {
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 480px) {
   .bounceCardsContainer {
-    height: 300px;
+    height: 280px;
+    width: 100%;
   }
 
   .bounce-card {
-    width: 160px;
+    width: 150px;
     border-width: 3px;
+    border-radius: 20px;
   }
 
   .bounce-card-icon {
-    font-size: 2rem;
+    font-size: 1.75rem;
+    margin-bottom: 0.4rem;
   }
 
   .bounce-card-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.2;
   }
 
   .bounce-card-description {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
   }
 
   .bounce-card-overlay {
@@ -209,10 +239,15 @@
 
   .bounce-card-tags {
     gap: 0.3rem;
+    margin-bottom: 0.6rem;
   }
 
   .bounce-card-tag {
     font-size: 0.65rem;
     padding: 0.2rem 0.6rem;
+  }
+
+  .bounce-card-link {
+    font-size: 0.75rem;
   }
 }
