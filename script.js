@@ -258,16 +258,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Smooth reveal animations with bounce effect for project cards
+// Smooth reveal animations
 const revealElements = document.querySelectorAll('.section-header, .service-card, .project-card, .contact-item');
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
-            // Add bounce animation specifically for project cards
-            if (entry.target.classList.contains('project-card')) {
-                entry.target.classList.add('bounce-in');
-            }
         }
     });
 }, { threshold: 0.2 });
@@ -296,24 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .service-card.revealed,
         .project-card.revealed {
             transition-delay: calc(var(--card-index, 0) * 0.1s);
-        }
-        
-        .project-card.bounce-in {
-            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            50% {
-                transform: translateY(-10px) scale(1.02);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
         }
     `;
     document.head.appendChild(style);
