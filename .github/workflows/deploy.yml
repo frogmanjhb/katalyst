@@ -52,9 +52,11 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./
-          server-dir: ./public_html/  # Common web root - try ./www/ or ./htdocs/ if this doesn't work
-          dangerous-clean-slate: false
+          server-dir: ./public_html/  # Web root directory - verify this matches your hosting
+          dangerous-clean-slate: false  # Set to true to delete files not in repo (use with caution!)
+          dry-run: false
           log-level: verbose
+          state-name: github-actions-state.json
           exclude: |
             **/.git*
             **/.git*/**
@@ -87,19 +89,25 @@ jobs:
             DEPLOYMENT_TROUBLESHOOTING.md
 
 
-      - name: Deployment Summary
+      - name: Verify Deployment
         if: success()
         run: |
-          echo "✅ Deployment completed successfully!"
-          echo "Files should now be available on your website."
+          echo "✅ Deployment completed!"
           echo ""
-          echo "If your website isn't loading, check:"
-          echo "1. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
-          echo "2. Try accessing in Incognito/Private mode"
-          echo "3. Check file timestamps in hosting control panel to verify files updated"
-          echo "4. Wait 1-2 minutes for DNS/caching to update"
+          echo "📋 Files that should be on server:"
+          echo "  - index.html"
+          echo "  - styles.css"
+          echo "  - script.js"
           echo ""
-          echo "Files deployed to: ./public_html/ directory"
+          echo "🔍 Next steps to verify:"
+          echo "1. Check your hosting File Manager (public_html folder)"
+          echo "2. Look at file 'Last Modified' timestamps - they should be recent"
+          echo "3. If timestamps didn't change, files might not be uploading"
+          echo "4. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
+          echo "5. Try accessing in Incognito/Private mode"
+          echo ""
+          echo "⚠️  If files still aren't updating, the sync might be skipping unchanged files."
+          echo "   Try making a small change to force an update (add a space/comment in index.html)"
 
       - name: Deployment Failed - Troubleshooting
         if: failure()
