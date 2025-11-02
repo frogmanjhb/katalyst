@@ -22,89 +22,105 @@ jobs:
           echo "HTML, CSS, JS files:"
           find . -maxdepth 1 -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) | head -10
 
-      - name: Verify FTP Secrets
+      - name: Verify SFTP Secrets
+        env:
+          SFTP_SERVER_VAR: ${{ secrets.SFTP_SERVER }}
+          SFTP_USERNAME_VAR: ${{ secrets.SFTP_USERNAME }}
+          SFTP_PASSWORD_VAR: ${{ secrets.SFTP_PASSWORD }}
+          FTP_SERVER_VAR: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME_VAR: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD_VAR: ${{ secrets.FTP_PASSWORD }}
         run: |
-          if [ -z "${{ secrets.FTP_SERVER }}" ]; then
-            echo "❌ FTP_SERVER secret is missing!"
+          # Use existing FTP secrets or SFTP-specific ones
+          if [ -n "$SFTP_SERVER_VAR" ]; then
+            SFTP_SERVER="$SFTP_SERVER_VAR"
+          else
+            SFTP_SERVER="$FTP_SERVER_VAR"
+          fi
+          
+          if [ -n "$SFTP_USERNAME_VAR" ]; then
+            SFTP_USERNAME="$SFTP_USERNAME_VAR"
+          else
+            SFTP_USERNAME="$FTP_USERNAME_VAR"
+          fi
+          
+          if [ -n "$SFTP_PASSWORD_VAR" ]; then
+            SFTP_PASSWORD="$SFTP_PASSWORD_VAR"
+          else
+            SFTP_PASSWORD="$FTP_PASSWORD_VAR"
+          fi
+          
+          if [ -z "$SFTP_SERVER" ]; then
+            echo "❌ SFTP/FTP_SERVER secret is missing!"
+            echo "💡 Add GitHub Secret: FTP_SERVER = ftp.katalystlabs.co.za"
             exit 1
           fi
-          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
-            echo "❌ FTP_USERNAME secret is missing!"
+          if [ -z "$SFTP_USERNAME" ]; then
+            echo "❌ SFTP/FTP_USERNAME secret is missing!"
+            echo "💡 Add GitHub Secret: FTP_USERNAME = katalyst"
             exit 1
           fi
-          if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
-            echo "❌ FTP_PASSWORD secret is missing!"
+          if [ -z "$SFTP_PASSWORD" ]; then
+            echo "❌ SFTP/FTP_PASSWORD secret is missing!"
+            echo "💡 Add GitHub Secret: FTP_PASSWORD = (your main hosting account password)"
             exit 1
           fi
-          echo "✅ All FTP secrets are configured"
-          echo "FTP Server: ${{ secrets.FTP_SERVER }}"
-          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
+          echo "✅ All SFTP secrets are configured"
+          echo "SFTP Server: $SFTP_SERVER"
+          echo "SFTP Username: $SFTP_USERNAME"
           echo ""
-          echo "⚠️  TIP: Use the 'katalyst' special FTP account (logs into /home/katalyst)"
-          echo "⚠️  TIP: Password might be your main hosting account password, or set it in control panel"
+          echo "ℹ️  Using SFTP (SSH File Transfer Protocol) - recommended for cPanel primary FTP accounts"
+          echo "💡 Using existing FTP_* secrets (or create SFTP_* secrets if preferred)"
+          
+          # Export for next step
+          echo "SFTP_SERVER=$SFTP_SERVER" >> $GITHUB_ENV
+          echo "SFTP_USERNAME=$SFTP_USERNAME" >> $GITHUB_ENV
+          echo "SFTP_PASSWORD=$SFTP_PASSWORD" >> $GITHUB_ENV
 
-      - name: FTP Deploy (try plain FTP first - faster, no encryption)
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./
-          server-dir: ./public_html/  # Deploy to public_html in /home/katalyst directory
-          dangerous-clean-slate: false
-          dry-run: false
-          log-level: verbose
-          state-name: github-actions-state.json
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            README.md
-            .gitignore
-            DEPLOYMENT_TROUBLESHOOTING.md
-        continue-on-error: true
-        id: ftp-deploy
-
-      - name: FTPS Deploy (fallback if plain FTP fails)
-        if: steps.ftp-deploy.outcome == 'failure'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./
-          server-dir: ./public_html/  # Deploy to public_html in /home/katalyst directory
-          dangerous-clean-slate: false
-          dry-run: false
-          log-level: verbose
-          state-name: github-actions-state.json
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            README.md
-            .gitignore
-            DEPLOYMENT_TROUBLESHOOTING.md
+      - name: SFTP Deploy using lftp
+        run: |
+          # Install lftp which supports password-based SFTP
+          sudo apt-get update -qq
+          sudo apt-get install -y lftp
+          
+          # Create lftp script for SFTP upload
+          cat > /tmp/sftp_upload.lftp << EOF
+          set sftp:auto-confirm yes
+          set ssl:verify-certificate no
+          open -u ${{ env.SFTP_USERNAME }},${{ env.SFTP_PASSWORD }} sftp://${{ env.SFTP_SERVER }}
+          lcd .
+          cd /home/katalyst/public_html
+          mkdir -p /home/katalyst/public_html
+          put -e index.html
+          put -e styles.css
+          put -e script.js
+          bye
+          EOF
+          
+          # Execute SFTP upload
+          lftp -f /tmp/sftp_upload.lftp || {
+            echo "❌ SFTP upload failed!"
+            echo "Check: 1) SFTP enabled on server, 2) Correct credentials, 3) Server allows password auth"
+            exit 1
+          }
+          
+          echo "✅ Files uploaded via SFTP successfully!"
 
 
       - name: Verify Deployment
         if: success()
         run: |
-          echo "✅ Deployment completed successfully!"
+          echo "✅ SFTP Deployment completed successfully!"
           echo ""
-          echo "📋 Files that should be on server:"
+          echo "📋 Files deployed to /home/katalyst/public_html/:"
           echo "  - index.html"
           echo "  - styles.css"
           echo "  - script.js"
           echo ""
           echo "🔍 Next steps to verify:"
-          echo "1. Check your hosting File Manager (public_html folder)"
+          echo "1. Check your hosting File Manager (/home/katalyst/public_html/ folder)"
           echo "2. Look at file 'Last Modified' timestamps - they should be recent"
-          echo "3. Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
+          echo "3. Visit your website and clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)"
           echo "4. Try accessing in Incognito/Private mode"
 
       - name: Deployment Failed - Troubleshooting
@@ -123,13 +139,15 @@ jobs:
           echo "- Created public_html directory"
           echo ""
           echo "⚠️  What failed:"
-          echo "- Connection dropped during file upload"
-          echo ""
-          echo "ℹ️  Note: Tried plain FTP first, then FTPS if needed"
+          echo "- SFTP connection or authentication issue"
           echo ""
           echo "🔄 Solution:"
-          echo "The workflow will automatically retry. If it fails again:"
-          echo "1. Wait a few minutes and try deploying again"
-          echo "2. Check if your hosting has FTP connection limits"
-          echo "3. Contact Absolute Hosting if connection issues persist"
+          echo "1. Update GitHub Secrets (can use existing FTP_* secrets or create SFTP_* ones):"
+          echo "   - FTP_SERVER or SFTP_SERVER: ftp.katalystlabs.co.za"
+          echo "   - FTP_USERNAME or SFTP_USERNAME: katalyst"
+          echo "   - FTP_PASSWORD or SFTP_PASSWORD: (your main hosting account password)"
+          echo "2. SFTP uses port 22 (SSH) - ensure your hosting allows SFTP connections"
+          echo "3. Try using server IP address (102.214.8.67) instead of domain name"
+          echo "4. Verify SFTP is enabled - contact Absolute Hosting if needed"
+          echo "5. Some hosts require SSH key instead of password - check with hosting support"
 
