@@ -8,19 +8,52 @@
 2. Go to GitHub → Actions tab to see if workflow is triggering
 3. Ensure workflow file is in `.github/workflows/` directory
 
-### ❌ "FTP connection failed"
-**Possible causes:**
-- Wrong FTP server address
-- Incorrect username/password
-- FTP port blocked (try port 21 or 22)
+### ❌ "530 Login incorrect" Error
+**This is the most common error!** It means your credentials are being rejected.
 
-**Solution:**
-1. Double-check your FTP credentials in GitHub Secrets
-2. Test FTP connection manually with FileZilla
-3. Try different FTP server formats:
-   - `ftp.yourdomain.co.za`
-   - `yourdomain.co.za`
-   - `yourdomain.co.za:21` (with port)
+**Possible causes:**
+1. **Wrong username format** - Absolute Hosting might require:
+   - `[email protected]` format (e.g., `username@yourdomain.co.za`)
+   - Just `username` (no domain)
+   - Try both formats in your FTP client first!
+
+2. **Wrong password** - Passwords are case-sensitive and must match exactly
+
+3. **IP blocked** - Too many failed attempts may have blocked your IP
+   - Wait 30-60 minutes before trying again
+   - Or contact Absolute Hosting support to unblock
+
+4. **Server requires SFTP instead of FTP**
+   - The error message mentions "Users sometimes get this error when the server only supports SFTP"
+   - Try the SFTP workflow option (see below)
+
+**Solution Steps:**
+1. **Test credentials manually first:**
+   - Download FileZilla (free FTP client)
+   - Try connecting with:
+     - Protocol: FTP
+     - Host: Your FTP server address
+     - Username: Try both formats (`username` and `[email protected]`)
+     - Password: Your password
+     - Port: 21 (for FTP) or 22 (for SFTP)
+
+2. **If FTP fails, try SFTP:**
+   - In FileZilla: File → Site Manager → New Site
+   - Protocol: SFTP - SSH File Transfer Protocol
+   - Port: 22
+   - Test connection
+
+3. **Once you get a successful manual connection:**
+   - Note the exact username format that worked
+   - Note the protocol (FTP or SFTP) and port
+   - Update your GitHub Secrets with the correct format
+   - If SFTP worked, the workflow will automatically try SFTP as fallback
+
+4. **Reset FTP password if unsure:**
+   - Log into Absolute Hosting control panel
+   - Go to FTP Accounts
+   - Reset the password
+   - Update GitHub Secret immediately
 
 ### ❌ "Files uploaded but website not showing"
 **Possible causes:**

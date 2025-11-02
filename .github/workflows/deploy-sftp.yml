@@ -1,13 +1,19 @@
-name: Deploy to Absolute Hosting
+name: Deploy to Absolute Hosting (SFTP)
+
+# Alternative workflow using SFTP protocol
+# Use this if regular FTP deployment fails with "530 Login incorrect"
+# To use: Copy the secrets setup, then commit this file and it will deploy alongside the main workflow
 
 on:
-  push:
-    branches:
-      - main  # Deploy when pushing to main branch
-  workflow_dispatch:  # Allow manual deployment
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      use_sftp:
+        description: 'Use SFTP protocol'
+        required: false
+        default: 'true'
 
 jobs:
-  ftp-deploy:
+  sftp-deploy:
     runs-on: ubuntu-latest
     
     steps:
@@ -40,29 +46,7 @@ jobs:
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
 
-      - name: FTP Deploy (try FTP first)
-        id: ftp-deploy
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ./public_html/
-          dangerous-clean-slate: false
-          dry-run: false
-          log-level: verbose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            README.md
-            .gitignore
-
-      - name: SFTP Deploy (fallback if FTP fails)
-        if: steps.ftp-deploy.outcome == 'failure'
+      - name: SFTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -71,7 +55,7 @@ jobs:
           protocol: sftp
           port: 22
           local-dir: ./
-          server-dir: ./public_html/
+          server-dir: /public_html/  # Try /public_html/, /www/, or just /
           dangerous-clean-slate: false
           log-level: verbose
           exclude: |
@@ -85,11 +69,5 @@ jobs:
       - name: Deployment Summary
         if: success()
         run: |
-          echo "✅ Deployment completed successfully!"
-          echo "Files should now be available on your website."
-          echo ""
-          echo "If your website isn't loading, check:"
-          echo "1. Server directory path in workflow (currently: ./public_html/)"
-          echo "2. DNS settings point to correct server"
-          echo "3. File permissions on hosting server"
+          echo "✅ SFTP Deployment completed successfully!"
 
