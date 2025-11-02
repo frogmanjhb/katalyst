@@ -375,6 +375,16 @@ body {
 .project-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: bounceHover 0.6s ease;
+}
+
+@keyframes bounceHover {
+    0%, 100% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
 .project-image {
@@ -742,6 +752,24 @@ body {
     25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
     50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
     75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.project-card.bounce-in {
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* Responsive Design */
