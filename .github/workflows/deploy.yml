@@ -49,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: ./public_html/
+          server-dir: ./public_html/  # Web root directory - adjust if needed: /public_html/ or /www/
           dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
@@ -60,6 +60,7 @@ jobs:
             **/.github/**
             README.md
             .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
 
       - name: SFTP Deploy (fallback if FTP fails)
         if: steps.ftp-deploy.outcome == 'failure'
@@ -81,6 +82,7 @@ jobs:
             **/.github/**
             README.md
             .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
 
       - name: Deployment Summary
         if: success()
