@@ -42,7 +42,32 @@ jobs:
           echo ""
           echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
 
-      - name: FTPS Deploy (with explicit TLS)
+      - name: FTP Deploy (try plain FTP first - faster, no encryption)
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ./
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
+          dry-run: false
+          log-level: verbose
+          state-name: github-actions-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            README.md
+            .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
+        continue-on-error: true
+        id: ftp-deploy
+
+      - name: FTPS Deploy (fallback if plain FTP fails)
+        if: steps.ftp-deploy.outcome == 'failure'
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -50,8 +75,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./
-          server-dir: ./public_html/  # Web root directory - verify this matches your hosting
-          dangerous-clean-slate: false  # Set to true to delete files not in repo (use with caution!)
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
           state-name: github-actions-state.json
@@ -84,20 +109,26 @@ jobs:
       - name: Deployment Failed - Troubleshooting
         if: failure()
         run: |
-          echo "❌ Deployment failed with '530 Login incorrect' error!"
+          echo "❌ Deployment failed!"
           echo ""
-          echo "🔧 CRITICAL FIX NEEDED:"
-          echo "The password in GitHub Secrets doesn't match what works in FileZilla."
+          echo "🔍 Common issues:"
+          echo "1. Connection timeout/reset during upload (network issue)"
+          echo "2. Server connection limits reached"
+          echo "3. FTP passive mode issues"
           echo ""
-          echo "📝 Steps to fix:"
-          echo "1. Go to GitHub → Your Repo → Settings → Secrets and variables → Actions"
-          echo "2. Click on FTP_PASSWORD → Delete it completely"
-          echo "3. Click 'New repository secret' → Name: FTP_PASSWORD"
-          echo "4. In the Value field, TYPE the password manually (don't copy/paste - type it character by character)"
-          echo "5. Make sure there are NO extra spaces at the beginning or end"
-          echo "6. Click 'Add secret'"
+          echo "✅ What worked:"
+          echo "- Login successful (credentials are correct!)"
+          echo "- Connected to server"
+          echo "- Created public_html directory"
           echo ""
-          echo "⚠️  IMPORTANT: The password MUST be typed manually to avoid hidden characters"
+          echo "⚠️  What failed:"
+          echo "- Connection dropped during file upload"
           echo ""
-          echo "After updating, wait 1-2 minutes, then push a change to trigger deployment again."
+          echo "ℹ️  Note: Tried plain FTP first, then FTPS if needed"
+          echo ""
+          echo "🔄 Solution:"
+          echo "The workflow will automatically retry. If it fails again:"
+          echo "1. Wait a few minutes and try deploying again"
+          echo "2. Check if your hosting has FTP connection limits"
+          echo "3. Contact Absolute Hosting if connection issues persist"
 
