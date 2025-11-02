@@ -40,7 +40,8 @@ jobs:
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
           echo ""
-          echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
+          echo "⚠️  TIP: Use the 'katalyst' special FTP account (logs into /home/katalyst)"
+          echo "⚠️  TIP: Password might be your main hosting account password, or set it in control panel"
 
       - name: FTP Deploy (try plain FTP first - faster, no encryption)
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
@@ -50,7 +51,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./
-          server-dir: ./public_html/
+          server-dir: ./public_html/  # Deploy to public_html in /home/katalyst directory
           dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
@@ -75,7 +76,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./
-          server-dir: ./public_html/
+          server-dir: ./public_html/  # Deploy to public_html in /home/katalyst directory
           dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
