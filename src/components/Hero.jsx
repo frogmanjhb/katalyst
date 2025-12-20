@@ -18,11 +18,11 @@ function Hero() {
       <div className="hero-container">
         <div className="hero-content">
           <h1 className="hero-title">
-            Transform Your Business with 
-            <span className="gradient-text"> Custom Software</span>
+            Expert Web Development & 
+            <span className="gradient-text"> Custom Software Solutions</span>
           </h1>
           <p className="hero-description">
-            We build powerful, user-friendly websites and software solutions that help small businesses or individuals thrive in the digital world.
+            Professional web developers specializing in responsive website development, custom web applications, and business software solutions. We build powerful, user-friendly websites and software that help businesses thrive in the digital world.
           </p>
           <div className="hero-buttons">
             <a href="#contact" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleScroll('#contact') }}>Get Started</a>

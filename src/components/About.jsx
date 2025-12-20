@@ -5,19 +5,21 @@ function About() {
         <div className="about-content">
           <div className="about-text">
             <div className="section-header">
-              <h2>About Katalyst LABS</h2>
-              <p>Empowering small businesses through innovative technology</p>
+              <h2>About Katalyst LABS - Expert Web Developers</h2>
+              <p>Empowering businesses through expert web development and innovative technology solutions</p>
             </div>
             <div className="about-description">
               <p>
-                At Katalyst LABS, we believe that every small business or individual deserves access to powerful, 
-                professional-grade technology solutions. Our mission is to bridge the gap between 
-                enterprise-level software capabilities and small business or individual budgets.
+                At Katalyst LABS, we are professional web developers who believe that every business deserves access to powerful, 
+                professional-grade web development and software solutions. Our team of expert web developers specializes in 
+                custom website development, web application development, and business software solutions. We bridge the gap between 
+                enterprise-level web development capabilities and accessible pricing.
               </p>
               <p>
-                We specialize in creating custom websites and software that not only look great but 
-                actually solve real business problems. From streamlining your operations to expanding 
-                your online presence, we're here to be the catalyst for your business or individual growth.
+                We specialize in creating custom websites, web applications, and software that not only look great but 
+                actually solve real business problems. Our web development services include responsive website design, 
+                e-commerce development, full-stack web applications, and business automation. From streamlining your operations 
+                to expanding your online presence with professional web development, we're here to be the catalyst for your business growth.
               </p>
             </div>
             <div className="about-stats">

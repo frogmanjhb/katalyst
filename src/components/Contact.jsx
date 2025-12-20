@@ -144,7 +144,7 @@ function Contact() {
       <div className="container">
         <div className="section-header">
           <h2>Let's Build Something Amazing Together</h2>
-          <p>Ready to transform your business? Get in touch and let's discuss your project.</p>
+          <p>Ready to transform your business with expert web development? Get in touch with our professional web developers and let's discuss your website or software project.</p>
         </div>
         <div className="contact-content">
           <div className="contact-info">

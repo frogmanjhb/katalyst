@@ -3,14 +3,14 @@ function Services() {
     {
       icon: 'fa-globe',
       title: 'Website Development',
-      description: 'Modern, responsive websites that look great on all devices and convert visitors into customers.',
-      features: ['Responsive Design', 'SEO Optimized', 'Fast Loading', 'Mobile-First']
+      description: 'Professional web development services creating modern, responsive websites that look great on all devices and convert visitors into customers. Expert web developers delivering SEO-optimized, high-performance websites.',
+      features: ['Responsive Web Design', 'SEO Optimized', 'Fast Loading', 'Mobile-First Development']
     },
     {
       icon: 'fa-cogs',
-      title: 'Custom Software',
-      description: 'Tailored software solutions to streamline your business operations and improve efficiency.',
-      features: ['Process Automation', 'Database Management', 'API Integration', 'Cloud Solutions']
+      title: 'Custom Software Development',
+      description: 'Expert custom software development services delivering tailored web applications and business software solutions to streamline your operations and improve efficiency.',
+      features: ['Web Application Development', 'Process Automation', 'Database Management', 'API Integration', 'Cloud Solutions']
     },
     {
       icon: 'fa-shopping-cart',
@@ -30,8 +30,8 @@ function Services() {
     <section id="services" className="services">
       <div className="container">
         <div className="section-header">
-          <h2>Our Services</h2>
-          <p>Comprehensive digital solutions tailored for your business needs</p>
+          <h2>Professional Web Development Services</h2>
+          <p>Expert web developers delivering comprehensive website development, custom software, and e-commerce solutions tailored for your business needs</p>
         </div>
         <div className="services-grid">
           {services.map((service, index) => (

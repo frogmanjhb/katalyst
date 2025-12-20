@@ -6,6 +6,7 @@ import Projects from './components/Projects'
 import About from './components/About'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import SEO from './components/SEO'
 import './index.css'
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
 
   return (
     <div className="App">
+      <SEO />
       <Navbar />
       <Hero />
       <Services />

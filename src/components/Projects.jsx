@@ -68,8 +68,8 @@ function Projects() {
     <section id="projects" className="projects">
       <div className="container">
         <div className="section-header">
-          <h2>Our Projects</h2>
-          <p>Showcasing our recent work and successful collaborations</p>
+          <h2>Web Development Projects & Portfolio</h2>
+          <p>Showcasing our expert web development work - custom websites, web applications, and successful client collaborations</p>
         </div>
         
         {/* BounceCards - Main project display */}
