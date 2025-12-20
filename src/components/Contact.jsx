@@ -7,6 +7,7 @@ function Contact() {
     subject: '',
     message: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -88,7 +89,7 @@ function Contact() {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
@@ -101,13 +102,41 @@ function Contact() {
       return
     }
 
-    showNotification('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.', 'success')
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    })
+    setIsSubmitting(true)
+
+    try {
+      // Create FormData object
+      const formDataToSend = new FormData()
+      formDataToSend.append('name', formData.name)
+      formDataToSend.append('email', formData.email)
+      formDataToSend.append('subject', formData.subject)
+      formDataToSend.append('message', formData.message)
+
+      // Send to PHP endpoint
+      const response = await fetch('/contact.php', {
+        method: 'POST',
+        body: formDataToSend
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        showNotification(result.message || 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.', 'success')
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        })
+      } else {
+        showNotification(result.message || 'Failed to send message. Please try again or contact us directly at info@katalystlabs.co.za', 'error')
+      }
+    } catch (error) {
+      console.error('Form submission error:', error)
+      showNotification('Failed to send message. Please try again or contact us directly at info@katalystlabs.co.za', 'error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -192,7 +221,9 @@ function Contact() {
                 required
               ></textarea>
             </div>
-            <button type="submit" className="btn btn-primary">Send Message</button>
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Send Message'}
+            </button>
           </form>
         </div>
       </div>

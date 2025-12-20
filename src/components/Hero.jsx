@@ -27,6 +27,7 @@ function Hero() {
           <div className="hero-buttons">
             <a href="#contact" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleScroll('#contact') }}>Get Started</a>
             <a href="#services" className="btn btn-secondary" onClick={(e) => { e.preventDefault(); handleScroll('#services') }}>Our Services</a>
+            <a href="#projects" className="btn btn-tertiary" onClick={(e) => { e.preventDefault(); handleScroll('#projects') }}>Our Projects</a>
           </div>
         </div>
         <div className="hero-image">

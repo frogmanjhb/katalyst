@@ -119,8 +119,33 @@ The contact form includes:
 - Animated success/error notifications
 - Professional styling
 - Responsive layout
+- **PHP backend integration** - Uses your hosting's email service
 
-*Note: The form currently shows a success message. For production, connect to a backend service or email provider.*
+### Form Setup
+
+The contact form uses a PHP script (`contact.php`) that runs on your hosting server to send emails. This is more reliable than third-party services and uses your existing hosting.
+
+**Configuration:**
+
+1. The PHP file is located at `public/contact.php` and will be deployed with your site
+2. Update the recipient email in `contact.php` (line 40):
+   ```php
+   $to = 'info@katalystlabs.co.za'; // Change this to your email
+   ```
+3. Make sure your hosting supports PHP (most shared hosting does, including Absolute Hosting)
+4. The form will automatically submit to `/contact.php` when deployed
+
+**How it works:**
+- Form submits to `contact.php` via POST request
+- PHP validates the form data
+- PHP sends email using the server's `mail()` function
+- Returns JSON response to the frontend
+- Frontend shows success/error notification
+
+**Note:** If emails aren't being delivered, check with your hosting provider about:
+- PHP `mail()` function configuration
+- SMTP settings (may need to configure)
+- Spam filter settings
 
 ## 🎯 Customization
 

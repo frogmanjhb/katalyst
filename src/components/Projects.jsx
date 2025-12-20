@@ -45,6 +45,22 @@ function Projects() {
       tags: ['Archive', 'History', 'WebGL'],
       url: 'https://voicesofthepast.netlify.app/',
       image: '/images/oldsa.jpg'
+    },
+    {
+      icon: 'fa-mountain',
+      title: 'Top Lodge',
+      description: 'Lodge management and booking platform for mountain retreats.',
+      tags: ['Lodge', 'Booking', 'Management'],
+      url: 'https://toplodge.up.railway.app/',
+      image: '/images/Toplodge.jpg'
+    },
+    {
+      icon: 'fa-golf-ball',
+      title: 'SA Golfing',
+      description: 'Golf course management and booking platform for South African golf clubs.',
+      tags: ['Golf', 'Booking', 'Sports'],
+      url: 'https://sagolfing.up.railway.app/',
+      image: '/images/Golfer2222.jpg'
     }
   ]
 
@@ -60,23 +76,27 @@ function Projects() {
         <div className="bounce-cards-wrapper">
           <BounceCards
             projects={projects}
-            containerWidth={isMobile ? 600 : 800}
+            containerWidth={isMobile ? 800 : 1200}
             containerHeight={isMobile ? 350 : 450}
             animationDelay={0.3}
             animationStagger={0.08}
             transformStyles={
               isMobile 
                 ? [
-                    'rotate(8deg) translate(-150px)',
-                    'rotate(4deg) translate(-75px)',
-                    'rotate(-4deg) translate(75px)',
-                    'rotate(-8deg) translate(150px)'
+                    'rotate(12deg) translate(-225px)',
+                    'rotate(6deg) translate(-112px)',
+                    'rotate(0deg) translate(0px)',
+                    'rotate(-3deg) translate(112px)',
+                    'rotate(-6deg) translate(225px)',
+                    'rotate(-12deg) translate(337px)'
                   ]
                 : [
-                    'rotate(12deg) translate(-240px)',
-                    'rotate(6deg) translate(-120px)',
-                    'rotate(-4deg) translate(120px)',
-                    'rotate(-10deg) translate(240px)'
+                    'rotate(16deg) translate(-350px)',
+                    'rotate(8deg) translate(-175px)',
+                    'rotate(0deg) translate(0px)',
+                    'rotate(-4deg) translate(175px)',
+                    'rotate(-8deg) translate(350px)',
+                    'rotate(-14deg) translate(525px)'
                   ]
             }
             enableHover={true}
