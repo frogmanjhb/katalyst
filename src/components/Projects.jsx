@@ -47,14 +47,6 @@ function Projects() {
       image: '/images/oldsa.jpg'
     },
     {
-      icon: 'fa-mountain',
-      title: 'Top Lodge',
-      description: 'Lodge management and booking platform for mountain retreats.',
-      tags: ['Lodge', 'Booking', 'Management'],
-      url: 'https://toplodge.up.railway.app/',
-      image: '/images/Toplodge.jpg'
-    },
-    {
       icon: 'fa-golf-ball',
       title: 'SA Golfing',
       description: 'Golf course management and booking platform for South African golf clubs.',
@@ -83,20 +75,18 @@ function Projects() {
             transformStyles={
               isMobile 
                 ? [
-                    'rotate(12deg) translate(-225px)',
-                    'rotate(6deg) translate(-112px)',
+                    'rotate(10deg) translate(-180px)',
+                    'rotate(5deg) translate(-90px)',
                     'rotate(0deg) translate(0px)',
-                    'rotate(-3deg) translate(112px)',
-                    'rotate(-6deg) translate(225px)',
-                    'rotate(-12deg) translate(337px)'
+                    'rotate(-5deg) translate(90px)',
+                    'rotate(-10deg) translate(180px)'
                   ]
                 : [
-                    'rotate(16deg) translate(-350px)',
-                    'rotate(8deg) translate(-175px)',
+                    'rotate(14deg) translate(-280px)',
+                    'rotate(7deg) translate(-140px)',
                     'rotate(0deg) translate(0px)',
-                    'rotate(-4deg) translate(175px)',
-                    'rotate(-8deg) translate(350px)',
-                    'rotate(-14deg) translate(525px)'
+                    'rotate(-5deg) translate(140px)',
+                    'rotate(-12deg) translate(280px)'
                   ]
             }
             enableHover={true}
