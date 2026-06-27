@@ -31,7 +31,6 @@ function Services() {
       <div className="container">
         <div className="section-header">
           <h2>Professional Web Development Services</h2>
-          <p>Expert web developers delivering comprehensive website development, custom software, and e-commerce solutions tailored for your business needs</p>
         </div>
         <div className="services-grid">
           {services.map((service, index) => (

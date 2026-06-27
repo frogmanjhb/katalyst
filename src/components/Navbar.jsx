@@ -40,6 +40,9 @@ function Navbar() {
             <a href="#services" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#services')}>Services</a>
           </li>
           <li className="nav-item">
+            <a href="#templates" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#templates')}>Templates</a>
+          </li>
+          <li className="nav-item">
             <a href="#projects" className="nav-link" onClick={(e) => handleSmoothScroll(e, '#projects')}>Projects</a>
           </li>
           <li className="nav-item">

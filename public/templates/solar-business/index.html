@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Interior — Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="wrap">
+      <span class="logo">Maison</span>
+      <nav>
+        <a href="#collection">Collection</a>
+        <a href="#rooms">Rooms</a>
+        <a href="#about">About</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" aria-label="Search">⌕</button>
+        <button type="button" aria-label="Cart">🛒</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Interior Design Studio</p>
+        <h1>Furniture that feels like <em>home</em></h1>
+        <p class="lead">Curated pieces for living, dining, and bedroom — crafted from natural materials with timeless silhouettes.</p>
+        <a href="#collection" class="btn-primary">Shop Collection</a>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card hero-card--main">
+          <span class="label">Bestseller</span>
+          <p>Oslo Lounge Chair</p>
+          <strong>R12,400</strong>
+        </div>
+        <div class="hero-card hero-card--accent"></div>
+        <div class="hero-card hero-card--small"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="collection" class="collection">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>New Arrivals</h2>
+        <a href="#">View all →</a>
+      </div>
+      <div class="product-grid">
+        <article class="product">
+          <div class="product-img img-1"></div>
+          <h3>Marble Side Table</h3>
+          <p class="meta">Living · Oak & stone</p>
+          <span class="price">R4,200</span>
+        </article>
+        <article class="product">
+          <div class="product-img img-2"></div>
+          <h3>Linen Sectional</h3>
+          <p class="meta">Living · Natural beige</p>
+          <span class="price">R28,900</span>
+        </article>
+        <article class="product">
+          <div class="product-img img-3"></div>
+          <h3>Walnut Dining Set</h3>
+          <p class="meta">Dining · Seats 6</p>
+          <span class="price">R19,500</span>
+        </article>
+        <article class="product">
+          <div class="product-img img-4"></div>
+          <h3>Ceramic Floor Lamp</h3>
+          <p class="meta">Bedroom · Matte white</p>
+          <span class="price">R2,800</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="rooms" class="rooms">
+    <div class="wrap rooms-split">
+      <div class="rooms-img"></div>
+      <div class="rooms-copy">
+        <p class="eyebrow">Room by room</p>
+        <h2>Design every corner with intention</h2>
+        <p>Browse styled room guides — from minimalist bedrooms to warm, textured living spaces.</p>
+        <ul>
+          <li><a href="#">Living Room →</a></li>
+          <li><a href="#">Bedroom →</a></li>
+          <li><a href="#">Home Office →</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="newsletter">
+    <div class="wrap">
+      <h2>Join our design journal</h2>
+      <p>Monthly inspiration, new drops, and styling tips.</p>
+      <form onsubmit="event.preventDefault(); alert('Template demo')">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">© 2026 Maison Interior — Website Template Demo</div>
+  </footer>
+</body>
+</html>

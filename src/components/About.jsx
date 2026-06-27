@@ -10,16 +10,13 @@ function About() {
             </div>
             <div className="about-description">
               <p>
-                At Katalyst LABS, we are professional web developers who believe that every business deserves access to powerful, 
-                professional-grade web development and software solutions. Our team of expert web developers specializes in 
-                custom website development, web application development, and business software solutions. We bridge the gap between 
-                enterprise-level web development capabilities and accessible pricing.
+                Katalyst LABS delivers enterprise-quality web development at prices businesses can
+                actually afford. We build custom websites, web applications, and software that solve
+                real problems—not just look good.
               </p>
               <p>
-                We specialize in creating custom websites, web applications, and software that not only look great but 
-                actually solve real business problems. Our web development services include responsive website design, 
-                e-commerce development, full-stack web applications, and business automation. From streamlining your operations 
-                to expanding your online presence with professional web development, we're here to be the catalyst for your business growth.
+                Responsive design, e-commerce, full-stack applications, and business automation—
+                everything you need to streamline operations and grow your online presence.
               </p>
             </div>
             <div className="about-stats">

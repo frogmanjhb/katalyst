@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Services from './components/Services'
+import Templates from './components/Templates'
 import Projects from './components/Projects'
 import About from './components/About'
 import Contact from './components/Contact'
@@ -41,7 +42,7 @@ function App() {
     }, observerOptions)
 
     // Animate elements on scroll
-    const animatedElements = document.querySelectorAll('.service-card, .project-card, .contact-item, .about-description, .hero-content, .section-header')
+    const animatedElements = document.querySelectorAll('.service-card, .project-card, .contact-item, .about-description, .hero-content, .section-header, .template-showcase')
     
     animatedElements.forEach(el => {
       el.style.opacity = '0'
@@ -64,6 +65,7 @@ function App() {
       <Navbar />
       <Hero />
       <Services />
+      <Templates />
       <Projects />
       <About />
       <Contact />

@@ -20,13 +20,14 @@ function Footer() {
           <div className="footer-section">
             <div className="footer-logo">
               <h3>Katalyst LABS</h3>
-              <p>Building the future, one line of code at a time.</p>
+              <p>All it takes is a Katalyst.</p>
             </div>
           </div>
           <div className="footer-section">
             <h4>Services</h4>
             <ul>
               <li><a href="#services" onClick={(e) => { e.preventDefault(); handleScroll('#services') }}>Website Development</a></li>
+              <li><a href="#templates" onClick={(e) => { e.preventDefault(); handleScroll('#templates') }}>Website Templates</a></li>
               <li><a href="#services" onClick={(e) => { e.preventDefault(); handleScroll('#services') }}>Custom Software</a></li>
               <li><a href="#services" onClick={(e) => { e.preventDefault(); handleScroll('#services') }}>E-commerce</a></li>
               <li><a href="#services" onClick={(e) => { e.preventDefault(); handleScroll('#services') }}>Support</a></li>
@@ -51,7 +52,7 @@ function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 Katalyst LABS. All rights reserved.</p>
+          <p>&copy; 2026 Katalyst LABS. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -137,6 +137,14 @@ p {
     align-items: center;
 }
 
+.hero-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
@@ -379,6 +387,254 @@ p {
     left: 0;
     color: #667eea;
     font-weight: bold;
+}
+
+/* Templates Section */
+.templates {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+    overflow: hidden;
+}
+
+.template-showcase {
+    margin-top: 3rem;
+    outline: none;
+}
+
+.template-showcase:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 4px;
+    border-radius: 12px;
+}
+
+.template-nav {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.template-nav-pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.65rem 1.25rem;
+    border: 2px solid #e0e4f0;
+    border-radius: 50px;
+    background: white;
+    color: #555;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.template-nav-pill:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.template-nav-pill.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+}
+
+.template-nav-number {
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+.browser-frame {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.browser-chrome {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: #f0f2f5;
+    border-bottom: 1px solid #dde1e8;
+    flex-wrap: wrap;
+}
+
+.browser-dots {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.browser-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+}
+
+.browser-dots span:nth-child(1) { background: #ff5f57; }
+.browser-dots span:nth-child(2) { background: #febc2e; }
+.browser-dots span:nth-child(3) { background: #28c840; }
+
+.browser-url {
+    flex: 1;
+    min-width: 0;
+    background: white;
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.browser-open-link {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.browser-open-link:hover {
+    color: #764ba2;
+}
+
+.template-viewport {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    aspect-ratio: 16 / 10;
+    max-height: 65vh;
+    background: #fff;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+.template-viewport:active {
+    cursor: grabbing;
+}
+
+.template-track {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.template-track.dragging {
+    transition: none;
+}
+
+.template-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-iframe-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.template-iframe {
+    border: none;
+    display: block;
+    background: transparent;
+    pointer-events: none;
+    transform-origin: top left;
+}
+
+.template-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.template-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.template-arrow {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #e0e4f0;
+    background: white;
+    color: #667eea;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.template-arrow:hover:not(:disabled) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+}
+
+.template-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.template-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.template-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: #d0d5e0;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.25s ease;
+}
+
+.template-dot.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scale(1.25);
+}
+
+.template-description {
+    text-align: center;
+    color: #666;
+    margin-top: 1.25rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 /* Projects Section */
@@ -850,7 +1106,11 @@ p {
     .hero-description {
         font-size: 1.1rem;
         margin-bottom: 2rem;
-        padding: 0 1rem;
+        padding: 0;
+    }
+
+    .hero-card {
+        padding: 2rem;
     }
 
     .hero-buttons {
@@ -877,6 +1137,33 @@ p {
 
     .service-card {
         padding: 2rem 1.5rem;
+    }
+
+    .templates {
+        padding: 4rem 0;
+    }
+
+    .template-showcase {
+        margin-top: 2rem;
+    }
+
+    .template-viewport {
+        max-height: 60vh;
+        aspect-ratio: 4 / 3;
+    }
+
+    .browser-chrome {
+        gap: 0.5rem;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .browser-open-link {
+        font-size: 0.75rem;
+    }
+
+    .template-nav-pill {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
     }
 
     .projects {
@@ -987,6 +1274,11 @@ p {
         font-size: 1rem;
         margin-bottom: 1.75rem;
         padding: 0;
+    }
+
+    .hero-card {
+        padding: 1.5rem;
+        border-radius: 20px;
     }
 
     .hero-buttons {

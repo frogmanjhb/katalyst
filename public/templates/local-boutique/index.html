@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleCart — Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="promo-bar">🎉 Summer Sale — Up to 40% off selected items · <a href="#sale">Shop now</a></div>
+
+  <header class="header">
+    <div class="wrap header-row">
+      <span class="logo">StyleCart</span>
+      <div class="search-box">
+        <input type="search" placeholder="Search products, brands…">
+      </div>
+      <div class="header-icons">
+        <button type="button" aria-label="Wishlist">♡</button>
+        <button type="button" aria-label="Cart" class="cart-btn">🛒 <span>3</span></button>
+      </div>
+    </div>
+    <div class="wrap categories">
+      <a href="#" class="cat active">All</a>
+      <a href="#" class="cat">Women</a>
+      <a href="#" class="cat">Men</a>
+      <a href="#" class="cat">Shoes</a>
+      <a href="#" class="cat">Accessories</a>
+      <a href="#" class="cat sale-link">Sale 🔥</a>
+    </div>
+  </header>
+
+  <section id="sale" class="banner">
+    <div class="wrap banner-inner">
+      <div class="banner-text">
+        <span class="banner-tag">Limited Time</span>
+        <h1>Flash Sale<br><strong>40% OFF</strong></h1>
+        <p>On trending fashion & footwear. Ends Sunday.</p>
+        <button type="button" onclick="alert('Template demo')">Shop the Sale</button>
+      </div>
+      <div class="banner-visual">
+        <div class="banner-circle"></div>
+        <span class="banner-percent">40%</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="products">
+    <div class="wrap">
+      <div class="section-top">
+        <h2>Trending Now</h2>
+        <div class="filters">
+          <button type="button" class="filter active">Popular</button>
+          <button type="button" class="filter">New In</button>
+          <button type="button" class="filter">Price ↓</button>
+        </div>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="product-img img-a">
+            <span class="badge badge-sale">-30%</span>
+            <button type="button" class="wish">♡</button>
+          </div>
+          <h3>Classic White Sneakers</h3>
+          <div class="rating">★★★★★ <span>(128)</span></div>
+          <div class="price-row">
+            <span class="price-now">R899</span>
+            <span class="price-was">R1,299</span>
+          </div>
+          <button type="button" class="add-cart" onclick="alert('Template demo')">Add to Cart</button>
+        </article>
+        <article class="product-card">
+          <div class="product-img img-b">
+            <span class="badge badge-new">New</span>
+            <button type="button" class="wish">♡</button>
+          </div>
+          <h3>Denim Jacket</h3>
+          <div class="rating">★★★★☆ <span>(64)</span></div>
+          <div class="price-row">
+            <span class="price-now">R649</span>
+          </div>
+          <button type="button" class="add-cart" onclick="alert('Template demo')">Add to Cart</button>
+        </article>
+        <article class="product-card">
+          <div class="product-img img-c">
+            <button type="button" class="wish">♡</button>
+          </div>
+          <h3>Leather Crossbody</h3>
+          <div class="rating">★★★★★ <span>(92)</span></div>
+          <div class="price-row">
+            <span class="price-now">R1,150</span>
+          </div>
+          <button type="button" class="add-cart" onclick="alert('Template demo')">Add to Cart</button>
+        </article>
+        <article class="product-card">
+          <div class="product-img img-d">
+            <span class="badge badge-sale">-40%</span>
+            <button type="button" class="wish">♡</button>
+          </div>
+          <h3>Running Trainers</h3>
+          <div class="rating">★★★★★ <span>(201)</span></div>
+          <div class="price-row">
+            <span class="price-now">R720</span>
+            <span class="price-was">R1,200</span>
+          </div>
+          <button type="button" class="add-cart" onclick="alert('Template demo')">Add to Cart</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="perks">
+    <div class="wrap perks-row">
+      <div><strong>🚚</strong> Free shipping over R500</div>
+      <div><strong>↩</strong> 30-day returns</div>
+      <div><strong>🔒</strong> Secure checkout</div>
+      <div><strong>💬</strong> 24/7 support</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <strong>StyleCart</strong>
+        <p>Your one-stop fashion destination.</p>
+      </div>
+      <div>
+        <strong>Shop</strong>
+        <a href="#">Women</a>
+        <a href="#">Men</a>
+        <a href="#">Sale</a>
+      </div>
+      <div>
+        <strong>Help</strong>
+        <a href="#">Contact</a>
+        <a href="#">Returns</a>
+        <a href="#">FAQ</a>
+      </div>
+    </div>
+    <div class="wrap footer-copy">© 2026 StyleCart — Website Template Demo</div>
+  </footer>
+</body>
+</html>
