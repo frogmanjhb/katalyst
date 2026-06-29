@@ -561,6 +561,19 @@ p {
     transform-origin: top left;
 }
 
+.template-viewport--external {
+    overflow-y: hidden;
+    cursor: default;
+}
+
+.template-viewport--external:active {
+    cursor: default;
+}
+
+.template-iframe--external {
+    pointer-events: auto;
+}
+
 .template-placeholder {
     width: 100%;
     height: 100%;

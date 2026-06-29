@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const SWIPE_THRESHOLD = 50
 const PREVIEW_WIDTH = 1280
+const EXTERNAL_PREVIEW_HEIGHT = 2400
 
 function TemplateShowcase({ templates }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -112,6 +113,8 @@ function TemplateShowcase({ templates }) {
     const wrap = iframe.parentElement
     if (!viewport || !slide || !wrap) return
 
+    const isExternal = iframe.dataset.external === 'true'
+
     const applyScale = (contentHeight) => {
       const scale = viewport.clientWidth / PREVIEW_WIDTH
       const scaledHeight = contentHeight * scale
@@ -134,10 +137,38 @@ function TemplateShowcase({ templates }) {
       slide.style.height = `${scaledHeight}px`
     }
 
-    try {
-      const doc = iframe.contentDocument
-      if (!doc) return
+    const fitExternalIframe = () => {
+      const height = viewport.clientHeight
 
+      iframe.style.width = '100%'
+      iframe.style.height = `${height}px`
+      iframe.style.zoom = ''
+      iframe.style.transform = 'none'
+
+      wrap.style.width = '100%'
+      wrap.style.height = `${height}px`
+      slide.style.height = `${height}px`
+    }
+
+    if (isExternal) {
+      fitExternalIframe()
+      return
+    }
+
+    let doc = null
+    try {
+      doc = iframe.contentDocument
+    } catch {
+      applyScale(EXTERNAL_PREVIEW_HEIGHT)
+      return
+    }
+
+    if (!doc) {
+      applyScale(EXTERNAL_PREVIEW_HEIGHT)
+      return
+    }
+
+    try {
       let lockStyle = doc.getElementById('katalyst-preview-lock')
       if (!lockStyle) {
         lockStyle = doc.createElement('style')
@@ -166,12 +197,7 @@ function TemplateShowcase({ templates }) {
       measure()
       doc.fonts?.ready?.then(measure).catch(measure)
     } catch {
-      iframe.style.width = '100%'
-      iframe.style.height = '2400px'
-      iframe.style.zoom = ''
-      iframe.style.transform = 'none'
-      wrap.style.height = '2400px'
-      slide.style.height = '2400px'
+      applyScale(EXTERNAL_PREVIEW_HEIGHT)
     }
   }, [])
 
@@ -247,7 +273,7 @@ function TemplateShowcase({ templates }) {
         </div>
 
         <div
-          className="template-viewport"
+          className={`template-viewport${activeTemplate.external ? ' template-viewport--external' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -272,8 +298,9 @@ function TemplateShowcase({ templates }) {
                       <iframe
                         src={template.previewUrl}
                         title={`${template.title} preview`}
-                        className="template-iframe"
-                        scrolling="no"
+                        className={`template-iframe${template.external ? ' template-iframe--external' : ''}`}
+                        data-external={template.external ? 'true' : undefined}
+                        scrolling={template.external ? 'yes' : 'no'}
                         onLoad={handleIframeLoad}
                         {...(!template.external && {
                           sandbox: 'allow-scripts allow-same-origin allow-forms'
