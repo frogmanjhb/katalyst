@@ -9,15 +9,16 @@ on:
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -51,21 +52,71 @@ jobs:
           echo "✅ All FTP secrets are configured"
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
-          echo ""
-          echo "⚠️  TIP: Make sure FTP_PASSWORD in GitHub Secrets matches EXACTLY what works in FileZilla"
 
-      - name: FTP Deploy (try plain FTP first - faster, no encryption)
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      - name: Test server connectivity
+        run: |
+          SERVER="${{ secrets.FTP_SERVER }}"
+          # Strip protocol prefix if accidentally included in the secret
+          SERVER="${SERVER#ftp://}"
+          SERVER="${SERVER#ftps://}"
+          SERVER="${SERVER#sftp://}"
+          SERVER="${SERVER%%/*}"
+
+          echo "Testing TCP connectivity from GitHub Actions runner to $SERVER..."
+          echo ""
+          for PORT in 21 990 22; do
+            if timeout 15 bash -c "echo > /dev/tcp/$SERVER/$PORT" 2>/dev/null; then
+              echo "✅ Port $PORT is reachable"
+            else
+              echo "❌ Port $PORT is NOT reachable (blocked, closed, or wrong host)"
+            fi
+          done
+          echo ""
+          echo "If port 21/990 are closed but 22 is open, your host likely requires SFTP (not supported by FTP-Deploy-Action)."
+          echo "If all ports fail, verify FTP_SERVER or ask Absolute Hosting to allow GitHub Actions IP ranges."
+
+      - name: FTPS Deploy (preferred — most hosts require encrypted FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
+          protocol: ftps
+          port: ${{ secrets.FTP_PORT != '' && secrets.FTP_PORT || '21' }}
           local-dir: ./dist/
           server-dir: ./public_html/
           dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
+          security: loose
+          timeout: 120000
+          state-name: github-actions-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            README.md
+            .gitignore
+            DEPLOYMENT_TROUBLESHOOTING.md
+        continue-on-error: true
+        id: ftps-deploy
+
+      - name: FTP Deploy (fallback if FTPS fails)
+        if: steps.ftps-deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT != '' && secrets.FTP_PORT || '21' }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
+          dry-run: false
+          log-level: verbose
+          timeout: 120000
           state-name: github-actions-state.json
           exclude: |
             **/.git*
@@ -78,19 +129,22 @@ jobs:
         continue-on-error: true
         id: ftp-deploy
 
-      - name: FTPS Deploy (fallback if plain FTP fails)
-        if: steps.ftp-deploy.outcome == 'failure'
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      - name: FTPS legacy Deploy (fallback — implicit TLS on port 990)
+        if: steps.ftps-deploy.outcome == 'failure' && steps.ftp-deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftps-legacy
+          port: 990
           local-dir: ./dist/
           server-dir: ./public_html/
           dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
+          security: loose
+          timeout: 120000
           state-name: github-actions-state.json
           exclude: |
             **/.git*
@@ -123,24 +177,24 @@ jobs:
         run: |
           echo "❌ Deployment failed!"
           echo ""
-          echo "🔍 Common issues:"
-          echo "1. Connection timeout/reset during upload (network issue)"
-          echo "2. Server connection limits reached"
-          echo "3. FTP passive mode issues"
+          echo "🔍 'Timeout (control socket)' means the runner could not open an FTP connection."
+          echo "   This is NOT a wrong-password error — it happens before login."
           echo ""
-          echo "✅ What worked:"
-          echo "- Login successful (credentials are correct!)"
-          echo "- Connected to server"
-          echo "- Created public_html directory"
+          echo "Check the 'Test server connectivity' step above:"
+          echo "  - Port 21/990 closed → host may block FTP from GitHub Actions IPs"
+          echo "  - Port 22 open only → host requires SFTP (FTP-Deploy-Action cannot use SFTP)"
           echo ""
-          echo "⚠️  What failed:"
-          echo "- Connection dropped during file upload"
+          echo "✅ Fix in FileZilla first:"
+          echo "  1. Connect with the same host/user/password as GitHub Secrets"
+          echo "  2. Note which protocol works: FTP, FTPS (explicit TLS), or SFTP"
+          echo "  3. If SFTP works, you need SSH keys + SamKirkland/web-deploy instead"
           echo ""
-          echo "ℹ️  Note: Tried plain FTP first, then FTPS if needed"
+          echo "✅ Verify GitHub Secrets:"
+          echo "  - FTP_SERVER: hostname only (e.g. ftp.yourdomain.co.za), no ftp:// prefix"
+          echo "  - FTP_USERNAME: exact format from FileZilla (username or user@domain)"
+          echo "  - FTP_PASSWORD: must match FileZilla exactly (case-sensitive)"
+          echo "  - FTP_PORT (optional): only if your host uses a non-standard port"
           echo ""
-          echo "🔄 Solution:"
-          echo "The workflow will automatically retry. If it fails again:"
-          echo "1. Wait a few minutes and try deploying again"
-          echo "2. Check if your hosting has FTP connection limits"
-          echo "3. Contact Absolute Hosting if connection issues persist"
+          echo "If FileZilla works from your PC but GitHub Actions fails, contact Absolute Hosting"
+          echo "and ask them to allow FTP/FTPS from GitHub Actions runner IP ranges."
 
